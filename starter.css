@@ -1,0 +1,92 @@
+/* ============================================================================
+   dsh-custom-style —— DSH 界面自定义样式（可自由编辑）
+   ----------------------------------------------------------------------------
+   最省事的用法：打开 DSH「设置 → 自定义样式」，在面板里直接改文件、调宽度、保存。
+   想手写就编辑本目录（%DSH_HOME%\dsh-custom-style\，默认 C:\Users\<你>\.dsh\dsh-custom-style\）：
+   规则：本目录下所有 *.css 会按文件名顺序拼接后注入界面。
+   生效：保存文件即可，约 2 秒内自动生效，不需要重启或刷新界面。
+   还原：删掉某条规则或整个文件，界面立刻恢复原厂外观。
+   排错：浏览器 DevTools（Ctrl+Shift+I）里搜索 data-plugin-css="dsh-custom-style"，
+        可以看到拼接后的完整样式表；控制台有 [dsh-custom-style] 前缀的日志。
+   提示：官方类名是构建期哈希（如 .wCInkW_panel），升级后可能变化；
+        本文件优先使用稳定的 data-* / aria-* / 角色选择器。
+   ============================================================================ */
+
+/* 1) 设置弹窗宽度：原厂 800px，这里放宽到 1200px。
+      窗口更窄时仍由界面自带的 max-width: calc(100vw - 48px) 兜底，不会溢出屏幕。
+      !important 是必要的：本条与官方规则特异性相同，靠它稳定压过官方值。 */
+[data-shortcut-modal="settings"] {
+  width: 1200px !important;
+}
+
+/* 2) 设置弹窗高度：原厂 min(800px, 100vh - 48px)。 */
+/* [data-shortcut-modal="settings"] {
+     height: min(920px, calc(100vh - 48px)) !important;
+   } */
+
+/* 3) 设置左侧导航栏宽度：原厂 188px。 */
+/* [data-shortcut-modal="settings"] nav {
+     width: 220px !important;
+   } */
+
+/* 3b) 弹窗两侧留白（原厂 max-width 用 48px；窗口窄时它才是真正的限制）。 */
+/* [data-shortcut-modal="settings"] {
+     max-width: calc(100vw - 16px) !important;
+   } */
+
+/* 3c) 把「自己限了宽」的页面内容**居中**（推荐）：设置外壳的 .options 是普通块级盒子，
+      内容限宽时就会右侧留白；margin-inline:auto 把留白均分，对未限宽的元素是空操作。
+      已核对出厂 bundle 的限宽元素：
+        官方页统一是 *_section —— 内置插件 760px、插件市场 760px、模型 720px
+        第三方页常用 *_root / *_shell / *_wrap —— 如 Our Free Model 的 .ofm_root 1080px
+      注意 *_section 不是 .options 的直接子节点（中间隔着 slot 渲染层），所以要按类名后缀命中。
+      面板里「内容居中宽度」填 0 就是下面这段；填数字则统一成该宽度并居中。 */
+/* [data-shortcut-modal="settings"] [class*="_options"] > *,
+   [data-shortcut-modal="settings"] [class*="_section"],
+   [data-shortcut-modal="settings"] [class*="_root"],
+   [data-shortcut-modal="settings"] [class*="_shell"],
+   [data-shortcut-modal="settings"] [class*="_wrap"],
+   [data-shortcut-modal="settings"] [style*="max-width"] {
+     margin-inline: auto !important;
+   } */
+
+/* 3d) 彻底铺满：连宽度上限一起解除。内容会被拉伸，缩略图/省略号可能受影响，按需再用。 */
+/* [data-shortcut-modal="settings"] [class*="_options"] > *,
+   [data-shortcut-modal="settings"] [class*="_section"],
+   [data-shortcut-modal="settings"] [class*="_root"],
+   [data-shortcut-modal="settings"] [class*="_shell"],
+   [data-shortcut-modal="settings"] [class*="_wrap"],
+   [data-shortcut-modal="settings"] [style*="max-width"] {
+     max-width: none !important;
+     margin-inline: auto !important;
+   } */
+
+/* 4) 会话正文字号（界面「通用设置」里也能调，这里可强制覆盖）。 */
+/* body {
+     --dsh-content-font-size: 15px !important;
+   } */
+
+/* 4b) 代码块与行内代码字号。 */
+/* pre, code, kbd, samp {
+     font-size: 12.5px !important;
+   } */
+
+/* 4c) 面板圆角（还可以改 --dsw-radius-panel 等设计令牌）。 */
+/* [data-shortcut-modal="settings"] {
+     border-radius: 14px !important;
+   } */
+
+/* 5) 滚动条更细一些。 */
+/* ::-webkit-scrollbar { width: 8px; height: 8px; } */
+
+/* 6) 深色模式下把画布压得更暗。 */
+/* body[data-ds-dark-theme] { background: #0f1114 !important; } */
+
+/* 7) 隐藏界面元素（示例：藏掉设置导航里的第 9 个条目）。
+      先用 DevTools 选中元素确认结构，再按 nth-child / :has() 之类选择器定位。 */
+/* [data-shortcut-modal="settings"] nav button:nth-child(9) { display: none !important; } */
+
+/* 8) 只对某个自定义 CSS 文件生效的规则，也可以直接用媒体查询。 */
+/* @media (min-width: 2000px) {
+     [data-shortcut-modal="settings"] { width: 1500px !important; }
+   } */

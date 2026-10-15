@@ -1,0 +1,69 @@
+{
+  "name": "dsh-custom-style",
+  "version": "1.0.0",
+  "description": "Adds a Custom CSS settings section to the DeepSeek Harness GUI, where the CSS files under $DSH_HOME/dsh-custom-style can be listed, edited, created and deleted, dialog width, navigation width and body text size can be set with a few numbers, and the stylesheet is re-applied about every two seconds without patching the app.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "starter.css",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "custom-css",
+    "custom-style",
+    "userstyle",
+    "ui"
+  ],
+  "icon": "icon.svg",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.0-rc.2": "compatible"
+      }
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yutao8/dsh-custom-style.git"
+  },
+  "homepage": "https://github.com/yutao8/dsh-custom-style#readme",
+  "bugs": {
+    "url": "https://github.com/yutao8/dsh-custom-style/issues"
+  },
+  "scripts": {
+    "test": "node test-host.mjs && node test-client.mjs && node tools/test-session-tools.mjs && node tools/test-rename-cmd.mjs",
+    "preview": "node tools/local-preview.mjs",
+    "install:local": "node install.mjs --apply",
+    "rename-workspace": "node tools/rename-workspace.mjs --to D:\\path\\to\\dsh-custom-style --css-from dsh-custom-css"
+  }
+}

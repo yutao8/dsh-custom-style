@@ -1,0 +1,9 @@
+node_modules/
+*.tgz
+*.log
+
+# Scratch output of the development tools under tools/asar/
+tools/asar/extracted/
+tools/asar/__pycache__/
+# Backups of DeepSeek Harness' own bundled client code — never publish these
+tools/asar/work/
