@@ -197,9 +197,7 @@ index.js（宿主半身）──GET /dsh-custom-style/all.css──▶  client.j
 ```powershell
 node test-host.mjs                        # 宿主半身：44 项断言（假 ctx / req / res，临时 DSH_HOME）
 node test-client.mjs                      # 浏览器半身：59 项断言（假 ModuleLoader / DOM / fetch / React / slots）
-node tools/test-session-tools.mjs         # 会话工具：44 项断言（夹具 DSH_HOME，含断点续跑）
-node tools/test-rename-cmd.mjs            # 改名一键脚本：20 项断言（真实 cmd 沙箱，4 个场景）
-npm test                                  # 依次跑完以上四组
+npm test                                  # 依次跑完以上两组
 node tools/local-preview.mjs              # 本地预览服务（不需要 DSH），见下
 ```
 
@@ -220,28 +218,10 @@ node tools/local-preview.mjs --width 1400 --port 7799
 
 ### 开发工具
 
-- `tools/session-clone.mjs` —— 把一段会话日志搬到另一个工作区（harness 没有这个 API：工作区归属跟着
-  会话头部记录的 `cwd` 走）。`tools/verify-clone.mjs` 用自带的 zstd 帧解析器交叉校验结果，
-  `tools/lib/session-log.mjs` 是两者共用的解析/改写实现。
-- `tools/rename-workspace.mjs` —— 给项目目录改名，并把所有绝对路径引用一起搬走，共 6 步：
-  改目录名 → 迁移会话日志并重写头部 `cwd` → 更新 `workspace.json` → 合并用户样式目录 →
-  重建 profile 联接（顺带清掉指向旧目录或已悬空的旧包名条目）→ 删除带旧 `cwd` 的投影缓存记录。
-  默认只预览，`--apply` 才写入；每一步先备份、写后回读校验；目录联接只删链接、绝不删目标内容。
-  若中途被打断，**重跑同一条命令会自动续做**（识别「目录已改名」并跳过第 1 步）。
-- `tools/rename-now.cmd` —— 上面那个工具的一键封装，**不含任何机器特定路径**：只把开头的
-  `TO_NAME` 改成你要的新目录名，然后**退出 DSH、双击它**即可。
-  为什么必须等：实测证明，只要有任何进程的**工作目录**在该目录内部，Windows 就拒绝改名
-  （进程退出后立刻改名成功）。因此脚本先把自己复制到 `%TEMP%` 分离启动并立刻退出父进程，
-  子进程用 `/D C:\` 工作，避免自身句柄与工作目录挡住改名；两端路径经旁路 args 文件传递
-  （`start` + 嵌套引号带参数会丢参，实测踩过）。
-  除 DSH 外，**资源管理器窗口**停在该目录（本插件「打开目录」按钮就会开一个）同样会占用目录，
-  所以改名被占用时（退出码 6）会等 5 秒自动重试，最多 3 次；若上一轮只改完名就中断，
-  用 `rename-now.cmd "<旧目录>" "<新目录>"` 从新位置续跑。全过程写日志并自动用记事本打开。
-  `tools/test-rename-cmd.mjs` 会在临时目录里真实跑一遍这套流程（改名/失败/续跑/重试四个场景）。
 - `tools/asar/` —— 读取并就地修改出厂 `app.asar`，用于那些确实无法用 CSS 完成的改动；
   `patch_panel_width.py` 以等长改写调整设置弹窗宽度，并可 `--revert` 还原。
   `scan-all-maxwidth.py` 列出出厂设置 bundle 里所有 `max-width` 规则（每条独立 seek——
-  把过滤后的条目连着读会产生假阴性）。
+  把过滤后的条目连着读会产生假阴性）。需要设 `ASAR_PATH` 指向你的 `app.asar`。
 
 这些工具只是开发辅助，不属于安装的插件（`files` 字段已把它们排除在 npm 包之外）。
 

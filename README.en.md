@@ -205,9 +205,7 @@ index.js  (host half)  ──GET /dsh-custom-style/all.css──▶  client.js (
 ```powershell
 node test-host.mjs                        # host half: 44 assertions (fake ctx / req / res, temporary DSH_HOME)
 node test-client.mjs                      # browser half: 59 assertions (fake ModuleLoader / DOM / fetch / React / slots)
-node tools/test-session-tools.mjs         # session tools: 44 assertions on a fixture DSH_HOME (incl. resume)
-node tools/test-rename-cmd.mjs            # one-click renamer: 20 assertions against a real cmd sandbox (4 scenarios)
-npm test                                  # run all four suites
+npm test                                  # run both suites
 node tools/local-preview.mjs              # local preview server (no DSH needed), see below
 ```
 
@@ -229,30 +227,10 @@ The preview page has no DSH services, so it exercises the stylesheet only: the s
 
 ### Development tools
 
-- `tools/session-clone.mjs` — relocates a session log into another workspace (the harness has no such API: workspace
-  membership follows the `cwd` recorded in the session header). `tools/verify-clone.mjs` cross-checks the result with its
-  own zstd frame parser, and `tools/lib/session-log.mjs` holds the shared parsing/rewrite code.
-- `tools/rename-workspace.mjs` — renames the project directory and moves every absolute-path reference with it, in six
-  steps: the directory itself → session logs (rewriting the header `cwd`) → `workspace.json` → the user style directory →
-  profile junctions (also clearing links that point at the old path or dangle under the old package name) → session
-  projection-cache records carrying the stale `cwd`. Previews by default, writes only with `--apply`; every step backs up
-  first and re-reads what it wrote, and junctions are removed as links only — never their contents. If a run is interrupted,
-  **re-running the same command resumes** (it detects "already renamed" and skips step 1).
-- `tools/rename-now.cmd` — a one-click wrapper for the tool above, with **no machine-specific paths in it**: edit only the
-  `TO_NAME` line at the top, then quit DSH and double-click it. The wait is required: measured on this machine, a rename
-  fails with *"used by another process"* while any process has its working directory inside the folder, and succeeds as
-  soon as that process exits. The script therefore copies itself to `%TEMP%`, launches detached and exits the parent at
-  once, and works from `/D C:\`, so neither its own script handle nor an inherited working directory blocks the rename;
-  the two paths travel through a sidecar args file (`start` plus nested quotes drops arguments — measured). An Explorer
-  window showing the folder (which the panel's "Open folder" button opens) blocks it the same way, so a rename that fails
-  *because the directory is busy* (exit code 6) waits 5 seconds and retries, up to 3 times. If an earlier run renamed the
-  directory but stopped mid-way, resume it from the new location with
-  `rename-now.cmd "<old dir>" "<new dir>"`. Output goes to a log file that opens in Notepad when it finishes.
-  `tools/test-rename-cmd.mjs` runs that whole flow for real in a temp directory (rename / failure / resume / retry).
 - `tools/asar/` — reads and patches the shipped `app.asar` for changes that genuinely cannot be done with CSS;
   `patch_panel_width.py` edits the settings-dialog width in place with a length-preserving rewrite and can `--revert` it.
   `scan-all-maxwidth.py` lists every `max-width` rule inside the shipped settings bundles (each entry seeks independently —
-  reading the filtered entries back-to-back produces false negatives).
+  reading the filtered entries back-to-back produces false negatives). Set `ASAR_PATH` to your `app.asar` first.
 
 The tools are development aids and are not part of the installed plugin (`files` keeps them out of the npm package).
 

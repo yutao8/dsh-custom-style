@@ -61,9 +61,8 @@
     "url": "https://github.com/yutao8/dsh-custom-style/issues"
   },
   "scripts": {
-    "test": "node test-host.mjs && node test-client.mjs && node tools/test-session-tools.mjs && node tools/test-rename-cmd.mjs",
+    "test": "node test-host.mjs && node test-client.mjs",
     "preview": "node tools/local-preview.mjs",
-    "install:local": "node install.mjs --apply",
-    "rename-workspace": "node tools/rename-workspace.mjs --to D:\\path\\to\\dsh-custom-style --css-from dsh-custom-css"
+    "install:local": "node install.mjs --apply"
   }
 }
